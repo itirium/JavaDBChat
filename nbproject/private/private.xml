@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="5">
+        <file>
+            <url>src/server/NetworkServer.java</url>
+            <bookmark id="5">
+                <name/>
+                <line>248</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/server/ChatServer.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>181</line>
+                <key/>
+            </bookmark>
+            <bookmark id="2">
+                <name/>
+                <line>182</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/client/ChatClient.java</url>
+            <bookmark id="3">
+                <name/>
+                <line>292</line>
+                <key/>
+            </bookmark>
+            <bookmark id="4">
+                <name/>
+                <line>293</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Users/itirium/Documents/NetBeansProjects/JavaDBChat/src/tblsJavaChat.sql</file>
+            <file>file:/C:/Users/itirium/Documents/NetBeansProjects/JavaDBChat/src/client/ChatClient.java</file>
+            <file>file:/C:/Users/itirium/Documents/NetBeansProjects/JavaDBChat/src/client/NetworkClient.java</file>
+            <file>file:/C:/Users/itirium/Documents/NetBeansProjects/JavaDBChat/src/server/ChatServer.java</file>
+            <file>file:/C:/Users/itirium/Documents/NetBeansProjects/JavaDBChat/src/model/DBJavaChat.java</file>
+            <file>file:/C:/Users/itirium/Documents/NetBeansProjects/JavaDBChat/src/model/ServerClass.java</file>
+            <file>file:/C:/Users/itirium/Documents/NetBeansProjects/JavaDBChat/src/server/NetworkServer.java</file>
+        </group>
+    </open-files>
+</project-private>
