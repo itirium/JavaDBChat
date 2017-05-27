@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
@@ -33,6 +34,13 @@ public class ChatClient extends javax.swing.JFrame {
     private List<ServerClass> servers = new ArrayList<ServerClass>();
 
     private static ChatClient instance;
+    
+    private String LoginUserName=null;
+    private String LoginUserPassword=null;
+    private boolean dialogOpenned=false;
+    private boolean isYes = false;
+    private int userID=-1;
+    public DBJavaChat db = new DBJavaChat();
 
     public static ChatClient getInstance(){
         return instance;
@@ -43,8 +51,9 @@ public class ChatClient extends javax.swing.JFrame {
     public ChatClient() {
         initComponents();
         ChatDBUtils.center(this);
-        DBJavaChat db = new DBJavaChat();
-        db.Connect();   
+        
+        String url = "jdbc:sqlserver://notesite.database.windows.net;databaseName=JavaChat;user=itirium;password=Dctdcfl159357";
+        db.Connect(url);   
         servers.clear();
         servers.addAll(db.getServerList());
 //        try{
@@ -74,6 +83,14 @@ public class ChatClient extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        dialogLog = new javax.swing.JDialog();
+        jLabel6 = new javax.swing.JLabel();
+        btnGo = new javax.swing.JButton();
+        btnCancel = new javax.swing.JButton();
+        cbFirstTime = new javax.swing.JCheckBox();
+        tfUserName = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        tfPassword = new javax.swing.JPasswordField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         tfPort = new javax.swing.JTextField();
@@ -91,6 +108,80 @@ public class ChatClient extends javax.swing.JFrame {
         cbServers = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+
+        dialogLog.setTitle("Login to Server");
+        dialogLog.setAlwaysOnTop(true);
+        dialogLog.setMaximumSize(new java.awt.Dimension(376, 269));
+        dialogLog.setMinimumSize(new java.awt.Dimension(376, 269));
+        dialogLog.setModal(true);
+        dialogLog.setPreferredSize(new java.awt.Dimension(376, 269));
+        dialogLog.setType(java.awt.Window.Type.POPUP);
+
+        jLabel6.setText("User Name:");
+
+        btnGo.setText("Go");
+        btnGo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGoActionPerformed(evt);
+            }
+        });
+
+        btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
+
+        cbFirstTime.setSelected(true);
+        cbFirstTime.setLabel("First Time Here (Registration)");
+
+        jLabel7.setText("Password:");
+
+        javax.swing.GroupLayout dialogLogLayout = new javax.swing.GroupLayout(dialogLog.getContentPane());
+        dialogLog.getContentPane().setLayout(dialogLogLayout);
+        dialogLogLayout.setHorizontalGroup(
+            dialogLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dialogLogLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(dialogLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(dialogLogLayout.createSequentialGroup()
+                        .addGroup(dialogLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel7))
+                        .addGap(27, 27, 27)
+                        .addGroup(dialogLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(tfUserName)
+                            .addComponent(tfPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)))
+                    .addGroup(dialogLogLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(btnGo, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancel, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
+                    .addGroup(dialogLogLayout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addComponent(cbFirstTime)))
+                .addContainerGap(25, Short.MAX_VALUE))
+        );
+        dialogLogLayout.setVerticalGroup(
+            dialogLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dialogLogLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(dialogLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(tfUserName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(dialogLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(tfPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cbFirstTime)
+                .addGap(18, 18, 18)
+                .addGroup(dialogLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnGo, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(15, Short.MAX_VALUE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Chat DB Client 2017");
@@ -137,6 +228,7 @@ public class ChatClient extends javax.swing.JFrame {
 
         btnClear.setLabel("clear");
 
+        tpChatText.setEditable(false);
         jScrollPane4.setViewportView(tpChatText);
 
         tfIP.setText("127.0.0.1");
@@ -231,8 +323,29 @@ public class ChatClient extends javax.swing.JFrame {
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         // TODO add your handling code here:
         if(!isConnected){
-            client = new NetworkClient(this, cbServers.getSelectedItem().toString(), Integer.parseInt(tfPort.getText()));
-            instance.client.connectToServer();
+            client = new NetworkClient(this, tfIP.getText(), Integer.parseInt(tfPort.getText()));
+            ChatDBUtils.center(dialogLog);
+            dialogOpenned = true;
+            LoginUserName=null;
+            LoginUserPassword=null;
+            
+            dialogLog.setVisible(true);
+            while(dialogLog.isVisible()){if(!dialogLog.isVisible()) break;}
+            
+            if(!dialogOpenned){
+            //  JOptionPane.showMessageDialog(null, "My Goodness, this is so concise");
+            if(cbFirstTime.isSelected()){
+                if(db.ifUserExist(LoginUserName)==-1) {
+                    db.addNewUser(LoginUserName, LoginUserPassword, Color.yellow);
+                } 
+                else{
+                JOptionPane.showMessageDialog(null, "This Username is alreay taken! Try another or unchek the mark!"); return;                
+                }
+            }
+            userID=db.getUserId(LoginUserName, LoginUserPassword);
+            if(userID!=-1){
+              //  JOptionPane.showMessageDialog(null, "My Goodness, this is so concise");
+            instance.client.connectToServer(LoginUserName, userID);
             //btnConnect.setEnabled(false);
             btnConnect.setText("Close");
             tfPort.setEditable(false);
@@ -240,6 +353,11 @@ public class ChatClient extends javax.swing.JFrame {
             btnSend.setEnabled(true);
             taMessage.setEnabled(true);
             isConnected = true;
+                }
+            else{
+                JOptionPane.showMessageDialog(null, "You Entered Wrong Password!\n Please try again!");
+            }
+            }
         }
         else {
             this.dispose();
@@ -281,6 +399,22 @@ public class ChatClient extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_cbServersActionPerformed
 
+    private void btnGoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoActionPerformed
+        // TODO add your handling code here:
+        LoginUserName = tfUserName.getText();
+        LoginUserPassword = new String(tfPassword.getPassword());
+        dialogOpenned=false;        
+        isYes=true;
+        dialogLog.setVisible(false);
+    }//GEN-LAST:event_btnGoActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        // TODO add your handling code here:
+       // isYes=false;
+        //dialogOpenned=false;  
+        dialogLog.setVisible(false);
+    }//GEN-LAST:event_btnCancelActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -290,8 +424,8 @@ public class ChatClient extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-       // ChatDBSplash splash = new ChatDBSplash();
-       // splash.Run();
+        ChatDBSplash splash = new ChatDBSplash();
+        splash.Run();
         
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -322,21 +456,29 @@ public class ChatClient extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> ListOfUsers;
+    private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnConnect;
+    private javax.swing.JButton btnGo;
     private javax.swing.JButton btnSend;
+    private javax.swing.JCheckBox cbFirstTime;
     private javax.swing.JComboBox<String> cbServers;
+    private javax.swing.JDialog dialogLog;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTextArea taMessage;
     private javax.swing.JTextField tfIP;
+    private javax.swing.JPasswordField tfPassword;
     private javax.swing.JTextField tfPort;
+    private javax.swing.JTextField tfUserName;
     private javax.swing.JTextPane tpChatText;
     // End of variables declaration//GEN-END:variables
 

@@ -37,6 +37,7 @@ public class NetworkServer implements PacketListener{
     private ServerSocket serverSocket;
     private boolean isRunning = false;
     private int serverPort;
+    public int serverID = -1;    
     
     private List<PacketListener> packetListeners = new ArrayList<>();
     private Map<String, Socket> connectedClientMap = new HashMap<>();
@@ -49,7 +50,7 @@ public class NetworkServer implements PacketListener{
         addPacketListener(this);        
     }
 
-    public void startServer(){
+    public void startServer(String url){
         //Створення сокету сервера
         if(!isRunning)
         {
@@ -57,10 +58,11 @@ public class NetworkServer implements PacketListener{
             serverSocket = new ServerSocket(serverPort);  
             ChatServer.getInstance().Log("Server socket started at port "+serverPort);
             DBJavaChat db = new DBJavaChat();
-            db.Connect();
-            if (!db.checkServerExist("127.0.0.1")) {
+            db.Connect(url);            
+            if (db.checkServerExist("127.0.0.1")==-1) {
                 db.addServer("Local", "127.0.0.1", Integer.toString(serverPort));
             }
+            serverID = db.checkServerExist("127.0.0.1");
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -74,7 +76,7 @@ public class NetworkServer implements PacketListener{
                while(isRunning){
                    try {
                        Socket client = serverSocket.accept();
-                       ChatServer.getInstance().Log("Client has connected! "+client.getRemoteSocketAddress());
+                       ChatServer.getInstance().Log("New Client has connected! "+client.getRemoteSocketAddress());
                        
                        //Читаємо дані кожного клієнта
                        new Thread(new Runnable() {
@@ -93,7 +95,7 @@ public class NetworkServer implements PacketListener{
                                        //разбор запроса new user
                                        if(type.equals(PacketType.CONNECT)){
                                            packet = new ConnectPacket(data);
-                                           ChatServer.getInstance().Log(client.getRemoteSocketAddress()+"\n Client: "+((ConnectPacket)packet).i_username);                                      
+                                           ChatServer.getInstance().Log("Client Login: "+((ConnectPacket)packet).i_username);                                      
                                        }
                                        if(type.equals(PacketType.CHAT)){
                                            packet = new MessagePacket(data);
@@ -180,37 +182,10 @@ public class NetworkServer implements PacketListener{
                Logger.getLogger(NetworkServer.class.getName()).log(Level.SEVERE, null, ex);
            }
        }
-       //      for(String nickname: connectedClientMap.keySet()){
-//             Socket socket = connectedClientMap.get(nickname);
-//             if(!socket.equals(client)){
-//                 DataOutputStream output = null;
-//                 try {
-//                     output = new DataOutputStream(socket.getOutputStream());
-//                     output.writeUTF(packet.getOutgoingData());
-//                     //connectedClientMap.remove(nickname);
-//                     //TODO send disconnect
-//                     //ChatServer.getInstance().Log("Client Disconnected: "+nickname+"\n");
-//                 } catch (IOException ex) {
-//                     Logger.getLogger(NetworkServer.class.getName()).log(Level.SEVERE, null, ex);
-//                 } finally {
-//                     try {
-//                         output.close();
-//                     } catch (IOException ex) {
-//                         Logger.getLogger(NetworkServer.class.getName()).log(Level.SEVERE, null, ex);
-//                     }
-//                }
-//             }
-//      }
     }
 
     @Override
     public void packetRecieved(Packet packet, Socket client) {
-//        if(packet!=null){
-//            ChatServer.getInstance().Log("packettype: "+packet.toString());
-//        }
-//        else{ 
-//        ChatServer.getInstance().Log("packet null");
-//        }
        if(packet instanceof ConnectPacket){
            try {
                connectClient((ConnectPacket)packet, client);
@@ -218,10 +193,8 @@ public class NetworkServer implements PacketListener{
                Logger.getLogger(NetworkServer.class.getName()).log(Level.SEVERE, null, ex);
            }
        }
-       if(packet instanceof MessagePacket){
-          
+       if(packet instanceof MessagePacket){          
            try {
-              // ChatServer.getInstance().Log("Broadcasting messages\n");
                messageClient((MessagePacket)packet, client);
                
            } catch (IOException ex) {
@@ -246,26 +219,17 @@ public class NetworkServer implements PacketListener{
              if(!socket.equals(client)){  
                  ConnectPacket pack = new ConnectPacket(packet.i_username);
                  sendPacket(pack, socket);   
-                 }
-            
-                sendAllListTo(socket);               
-
+                 }            
+                sendAllListTo(socket); 
              }          
     }
     
      private void messageClient(MessagePacket packet, Socket client) throws IOException {
-//        if(connectedClientMap.get(packet.i_username) != null)
-//        {
-//            return;
-//        }      
         for(String nickname: connectedClientMap.keySet()){
             //Якщо хтось підключився - відіслати це усім
              Socket socket = connectedClientMap.get(nickname);             
-            // if(!socket.equals(client)){  
-            //ChatServer.getInstance().Log(nickname);
              MessagePacket pack = new MessagePacket(packet.i_username,packet.message);
-                sendPacket(pack, socket);
-            //    }
+                sendPacket(pack, socket);          
              }          
     }
     
@@ -277,8 +241,7 @@ public class NetworkServer implements PacketListener{
                  disc_client=nickname;
                  connectedClientMap.remove(nickname);
                  //TODO send disconnect
-                  ChatServer.getInstance().Log("Client Disconnected: "+nickname+"\n");
-                  
+                  ChatServer.getInstance().Log("Client Disconnected: "+nickname+"\n");                  
              }
          }
          for(String nickname: connectedClientMap.keySet()){
@@ -300,18 +263,14 @@ public class NetworkServer implements PacketListener{
     private void sendPacket(Packet packet, Socket socket) throws IOException{
         DataOutputStream output = new DataOutputStream(socket.getOutputStream());
         output.writeUTF(packet.getOutgoingData());
-    }
-    
+    }    
     
     private void sendAllListTo(Socket client) throws IOException{       
         String[] usrs = connectedClientMap.keySet().toArray(new String[connectedClientMap.keySet().size()]);
-        
-        ListOfUsersPacket pack = new ListOfUsersPacket(usrs);
-             
+       
+        ListOfUsersPacket pack = new ListOfUsersPacket(usrs);             
             // if(!socket.equals(client)){}
-                sendPacket(pack, client);
-
-                 
+            sendPacket(pack, client);                 
     }
     
     private void sendAllListToAllConnected() throws IOException{   
@@ -320,11 +279,9 @@ public class NetworkServer implements PacketListener{
              
         for(String nickname: connectedClientMap.keySet()){
             //Якщо хтось підключився - відіслати це усім
-             Socket socket = connectedClientMap.get(nickname);
-             
+             Socket socket = connectedClientMap.get(nickname);             
             // if(!socket.equals(client)){}
-                sendPacket(pack, socket);
-
+            sendPacket(pack, socket);
              }     
     }
     private void sendClientDisconnectedMessage(){

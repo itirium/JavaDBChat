@@ -24,6 +24,8 @@ public class ChatServer extends javax.swing.JFrame {
     private static ChatServer instance;
     private static boolean isServerStarted = false;
     private NetworkServer server;
+    public static boolean isAutostart=false;
+    private static String JDBCConn="jdbc:sqlserver://notesite.database.windows.net;databaseName=JavaChat;user=itirium;password=Dctdcfl159357";
 
     /**
      * Creates new form ChatServer
@@ -31,12 +33,12 @@ public class ChatServer extends javax.swing.JFrame {
     public ChatServer() {
         initComponents();
         ChatDBUtils.center(this);
-       // 
+        isAutostart = cbAutostart.isSelected();
+  
         //setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         //((DefaultCaret)console.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
                 
-       //if(cbAutostart.isSelected()) startServer();        
-      // startServer();
+       
     }
 
     public static ChatServer getInstance(){
@@ -62,6 +64,8 @@ public class ChatServer extends javax.swing.JFrame {
         console = new javax.swing.JTextArea();
         cbAutostart = new javax.swing.JCheckBox();
         btnClearLog = new javax.swing.JButton();
+        tfJDBCString = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Chat DB Server 2017");
@@ -108,33 +112,48 @@ public class ChatServer extends javax.swing.JFrame {
             }
         });
 
+        tfJDBCString.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        tfJDBCString.setText("jdbc:sqlserver://notesite.database.windows.net;databaseName=JavaChat;user=itirium;password=Dctdcfl159357");
+        tfJDBCString.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfJDBCStringActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
+        jLabel3.setText("JDBC connection string:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfIPAdress, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfPort, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnStart)
-                        .addGap(18, 18, 18)
-                        .addComponent(cbAutostart)
-                        .addGap(0, 153, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane2))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(tfJDBCString, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnClearLog))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnClearLog)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tfIPAdress, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tfPort, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnStart)
+                                .addGap(18, 18, 18)
+                                .addComponent(cbAutostart))
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 153, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -148,11 +167,15 @@ public class ChatServer extends javax.swing.JFrame {
                     .addComponent(tfPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnStart)
                     .addComponent(cbAutostart))
-                .addGap(11, 11, 11)
-                .addComponent(btnClearLog, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnClearLog, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfJDBCString, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                     .addComponent(jScrollPane2))
                 .addContainerGap())
         );
@@ -161,13 +184,18 @@ public class ChatServer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
-        startServer();
+        startServer(JDBCConn);
     }//GEN-LAST:event_btnStartActionPerformed
 
     private void btnClearLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearLogActionPerformed
         // TODO add your handling code here:
         console.setText("");
     }//GEN-LAST:event_btnClearLogActionPerformed
+
+    private void tfJDBCStringActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfJDBCStringActionPerformed
+        // TODO add your handling code here:
+        JDBCConn = tfJDBCString.getText();
+    }//GEN-LAST:event_tfJDBCStringActionPerformed
 
     /**
      * @param args the command line arguments
@@ -179,8 +207,8 @@ public class ChatServer extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
        
-        //ChatDBSplash splash = new ChatDBSplash();
-       // splash.Run();
+        ChatDBSplash splash = new ChatDBSplash();
+        splash.Run();
                 
         
         try {
@@ -207,12 +235,14 @@ public class ChatServer extends javax.swing.JFrame {
                 instance = new ChatServer();
                 //instance.server.startServer();
                 instance.setVisible(true);
+                instance.autoStartServer();
+                //if(ChatServer.isAutostart) instance.server.startServer(JDBCConn);        
+                // startServer();
                
             }
-        }); 
-        
+        });         
     }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClearLog;
     private javax.swing.JButton btnStart;
@@ -220,10 +250,12 @@ public class ChatServer extends javax.swing.JFrame {
     private javax.swing.JTextArea console;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList<String> listOfUsers;
     private javax.swing.JTextField tfIPAdress;
+    private javax.swing.JTextField tfJDBCString;
     private javax.swing.JTextField tfPort;
     // End of variables declaration//GEN-END:variables
 
@@ -237,11 +269,11 @@ public class ChatServer extends javax.swing.JFrame {
         }
         listOfUsers.setModel(model);
     }
-    private void startServer(){
+    private void startServer(String url){
         //Start Server
         if(!isServerStarted){
             server = new NetworkServer(this, Integer.parseInt(tfPort.getText()));
-            server.startServer();
+            server.startServer(url);
             isServerStarted = true;
             btnStart.setText("Stop");
             tfIPAdress.setEnabled(false);
@@ -254,5 +286,9 @@ public class ChatServer extends javax.swing.JFrame {
            tfIPAdress.setEnabled(true);
            tfPort.setEnabled(true);           
         }
+    }
+    public void autoStartServer(){
+        if(cbAutostart.isSelected())
+            startServer(JDBCConn);
     }
 }

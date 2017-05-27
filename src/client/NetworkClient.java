@@ -33,9 +33,11 @@ public class NetworkClient {
     private String ipAdress;
     private int serverPort;
     private final ChatClient chat;
-    private String nickname;
+    private String nickname;    
     private String[] connectedUsers = null;
     public boolean isConnected = false;
+    public int userId = -1;
+    
     
     public NetworkClient(ChatClient chat,String ipAdress, int serverPort){
         this.ipAdress = ipAdress;
@@ -43,15 +45,17 @@ public class NetworkClient {
         this.chat = chat;
     }
     
-    public void connectToServer(){
+    public void connectToServer(String nick, int userID){
         
-        
-        nickname =JOptionPane.showInputDialog(null,"Enter nickname: ","Login",JOptionPane.QUESTION_MESSAGE);
+        //ChatClient.getInstance().dia
+        nickname = nick;
+        userId = userID;
+                
         if((nickname!=null)&&(!nickname.isEmpty())){
-            
+           
         try {
             socket = new Socket(ipAdress, serverPort);
-             ChatClient.getInstance().Log("..Connected to server\n");
+             ChatClient.getInstance().Log(" Connected to server\n");
              isConnected = true;
          //   DataOutputStream output = new DataOutputStream(socket.getOutputStream());
          //   output.writeUTF("Hello Server");
@@ -86,13 +90,13 @@ public class NetworkClient {
                             case REGISTER:
                                 break;
                             case CONNECT:
-                                 ChatClient.getInstance().Log("Client: "+((ConnectPacket)packet).i_username+" connected."); 
+                                 ChatClient.getInstance().Log(" Client: "+((ConnectPacket)packet).i_username+" connected.\n"); 
                                 break;
                             case DISCONNECT:
                                  ChatClient.getInstance().Log("Client "+data[1]+" disconnected.\n");
                                 break;
                             case CHAT:
-                                 ChatClient.getInstance().Log(data[1]+": ",data[2]+"\n",Color.BLUE);
+                                 ChatClient.getInstance().Log("  "+data[1]+"  :  ",data[2]+"\n",Color.BLUE);
                                 break;
                             case LOGOUT:
                                 break;
